@@ -1,0 +1,43 @@
+{
+	"name": "react-component-updater",
+	"version": "1.0.0",
+	"description": "Forcibly re-render a component from anywhere through React hooks.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/GrantGryczan/react-component-updater.git"
+	},
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"README.md",
+		"dist/*"
+	],
+	"scripts": {
+		"prepublishOnly": "tsc"
+	},
+	"author": "Grant Gryczan",
+	"license": "MIT",
+	"keywords": [
+		"react",
+		"hook",
+		"hooks",
+		"update",
+		"updater",
+		"component",
+		"components",
+		"re",
+		"render",
+		"re-render",
+		"rerender",
+		"force",
+		"forcibly",
+		"outside"
+	],
+	"dependencies": {
+		"react": "^17.0.1"
+	},
+	"devDependencies": {
+		"@types/react": "^17.0.3",
+		"typescript": "^4.2.3"
+	}
+}
