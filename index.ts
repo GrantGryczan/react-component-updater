@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 
+export type UpdaterHook = () => void;
+export type UpdaterFunction = () => void;
+export type Updater = readonly [UpdaterHook, UpdaterFunction];
+
 /**
  * Creates a [React component updater](https://github.com/GrantGryczan/react-component-updater#react-component-updater).
  * 
@@ -18,13 +22,13 @@ import { useState, useEffect } from 'react';
  * updateMyComponent();
  * ```
  */
-const createUpdater = () => {
+const createUpdater = (): Updater => {
 	let currentState = false;
 	
 	const updateStates: Array<() => void> = [];
 	
 	/** Call this to update any hooked components. */
-	const update = () => {
+	const update: UpdaterFunction = () => {
 		currentState = !currentState;
 		for (let i = 0; i < updateStates.length; i++) {
 			updateStates[i]();
@@ -32,7 +36,7 @@ const createUpdater = () => {
 	};
 	
 	/** Call this inside any component you want to update. */
-	const useUpdater = () => {
+	const useUpdater: UpdaterHook = () => {
 		const [, setState] = useState(currentState);
 		
 		useEffect(() => {
