@@ -1,6 +1,6 @@
 {
 	"name": "react-component-updater",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "Forcibly re-render a component from anywhere through React hooks.",
 	"repository": {
 		"type": "git",
