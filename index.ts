@@ -1,8 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 export type UpdaterHook = () => void;
 export type UpdaterFunction = () => void;
 export type Updater = readonly [UpdaterHook, UpdaterFunction];
+
+type UpdateState = (() => void) & {
+	/** The index of this function in `updateStates`. */
+	_index: number
+};
 
 /**
  * Creates a [React component updater](https://github.com/GrantGryczan/react-component-updater#react-component-updater).
@@ -25,7 +30,7 @@ export type Updater = readonly [UpdaterHook, UpdaterFunction];
 const createUpdater = (): Updater => {
 	let currentState = false;
 
-	const updateStates: Array<() => void> = [];
+	const updateStates: UpdateState[] = [];
 
 	/** Call this to update any hooked components. */
 	const update: UpdaterFunction = () => {
@@ -40,21 +45,26 @@ const createUpdater = (): Updater => {
 	const useUpdater: UpdaterHook = () => {
 		const [, setState] = useState(currentState);
 
-		useEffect(() => {
-			const updateState = () => {
+		const updateStateRef = useRef<UpdateState>();
+
+		// `updateState` must be set synchronously so that `setState` calls are effective even before the component is fully mounted.
+		if (!updateStateRef.current) {
+			const updateState: UpdateState = () => {
 				setState(currentState);
 			};
 
 			updateState._index = updateStates.push(updateState) - 1;
 
-			return () => {
-				// Delete `updateState` from `updateStates` in O(1) by popping the last item and swapping it into this item's place (unless this item is the popped item).
-				const lastUpdateState = updateStates.pop() as typeof updateState;
-				if (lastUpdateState !== updateState) {
-					updateStates[updateState._index] = lastUpdateState;
-					lastUpdateState._index = updateState._index;
-				}
-			};
+			updateStateRef.current = updateState;
+		}
+
+		useEffect(() => () => {
+			// Delete `updateState` from `updateStates` in O(1) by popping the last item and swapping it into this item's place (unless this item is the popped item).
+			const lastUpdateState = updateStates.pop()!;
+			if (lastUpdateState !== updateStateRef.current!) {
+				updateStates[updateStateRef.current!._index] = lastUpdateState;
+				lastUpdateState._index = updateStateRef.current!._index;
+			}
 		}, []);
 	};
 
