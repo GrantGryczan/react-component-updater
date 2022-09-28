@@ -21,7 +21,7 @@ const [useMyComponentUpdater, updateMyComponent] = createUpdater();
 ```ts
 const MyComponent = () => {
 	useMyComponentUpdater();
-	
+
 	// ...
 };
 ```
